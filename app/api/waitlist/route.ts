@@ -10,7 +10,12 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  let body: { firstName?: string; email?: string; phone?: string };
+  let body: {
+    firstName?: string;
+    email?: string;
+    phone?: string;
+    npcPersonality?: string;
+  };
   try {
     body = await request.json();
   } catch {
@@ -32,6 +37,7 @@ export async function POST(request: NextRequest) {
         firstName: body.firstName.trim(),
         email: body.email.trim().toLowerCase(),
         phone: body.phone?.trim() ?? "",
+        npcPersonality: body.npcPersonality?.trim() ?? "",
       }),
     });
 
