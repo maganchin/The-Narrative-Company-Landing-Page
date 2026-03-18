@@ -31,14 +31,35 @@ export default function WaitlistSection() {
   }, [submitted, headingControls]);
 
   return (
-    <motion.div
-      className="pointer-events-none fixed inset-0 z-10 flex items-end justify-end pb-6 px-4 sm:pb-10 sm:px-10"
-      initial={{ opacity: 0, scale: 0.96, filter: "blur(16px)" }}
-      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
-    >
-      <div className="pointer-events-auto w-full max-w-xl flex flex-col items-center sm:items-end gap-3 sm:gap-4">
-        {submitted ? (
+    <>
+      {/* Mobile-only tagline pinned near the top */}
+      {!submitted && (
+        <motion.div
+          className="pointer-events-none fixed inset-x-0 top-4 z-20 flex justify-center px-4 sm:hidden"
+          initial={{ opacity: 0, y: -8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+        >
+          <p
+            className="max-w-xs text-xs leading-snug tracking-[0.12em] text-white mix-blend-difference text-center"
+            style={{
+              fontFamily:
+                "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            }}
+          >
+            You&apos;re the main character in all OUR stories!
+          </p>
+        </motion.div>
+      )}
+
+      <motion.div
+        className="pointer-events-none fixed inset-0 z-10 flex items-end justify-end pb-6 px-4 sm:pb-10 sm:px-10"
+        initial={{ opacity: 0, scale: 0.96, filter: "blur(16px)" }}
+        animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <div className="pointer-events-auto w-full max-w-xl flex flex-col items-center sm:items-end gap-3 sm:gap-4">
+          {submitted ? (
           <motion.div
             initial={{ opacity: 0, y: 16, scale: 0.96 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -57,16 +78,16 @@ export default function WaitlistSection() {
               </p>
             </div>
           </motion.div>
-        ) : (
-          <>
-            <motion.div
+          ) : (
+            <>
+              <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
               className="w-full flex flex-col items-center sm:items-end text-center sm:text-right gap-1.5 sm:gap-2"
             >
-              <motion.span
-                className="text-4xl sm:text-5xl md:text-6xl leading-none pr-1"
+                <motion.span
+                className="hidden sm:inline-block text-4xl sm:text-5xl md:text-6xl leading-none pr-1"
                 style={{
                   fontFamily:
                     "'Pacifico', 'Comic Sans MS', 'Bradley Hand', cursive",
@@ -74,35 +95,37 @@ export default function WaitlistSection() {
                   textShadow: "0 6px 0 #3c2eff",
                 }}
                 animate={headingControls}
-              >
-                waitlist
-              </motion.span>
-              <p
-                className="w-full max-w-md text-xs sm:text-sm md:text-base leading-snug tracking-[0.12em]"
-                style={{
-                  fontFamily:
-                    "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-                  color: "#3c2eff",
-                }}
-              >
-                You&apos;re the main character in all OUR stories!
-              </p>
-            </motion.div>
+                >
+                  waitlist
+                </motion.span>
+                {/* Desktop / tablet tagline (hidden on phone; phone version is pinned at top) */}
+                <p
+                  className="hidden sm:block w-full max-w-md text-xs sm:text-sm md:text-base leading-snug tracking-[0.12em]"
+                  style={{
+                    fontFamily:
+                      "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    color: "#fffbc4",
+                  }}
+                >
+                  You&apos;re the main character in all OUR stories!
+                </p>
+              </motion.div>
 
-            <motion.div
+              <motion.div
               initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
               className="w-full max-w-md"
-            >
-              <WaitlistForm
-                ctaLabel="Join Waitlist"
-                onSuccess={() => setSubmitted(true)}
-              />
-            </motion.div>
-          </>
-        )}
-      </div>
-    </motion.div>
+              >
+                <WaitlistForm
+                  ctaLabel="Join Waitlist"
+                  onSuccess={() => setSubmitted(true)}
+                />
+              </motion.div>
+            </>
+          )}
+        </div>
+      </motion.div>
+    </>
   );
 }

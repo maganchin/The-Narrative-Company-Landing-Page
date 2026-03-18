@@ -105,11 +105,10 @@ export default function WaitlistForm({
           onChange={handleChange}
           placeholder="Name"
           disabled={status === "loading"}
-          className="border-b-2 border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#3c2eff]/80"
+          className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff] mix-blend-difference sm:mix-blend-normal"
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-            color: "#3c2eff",
           }}
         />
         <input
@@ -120,11 +119,10 @@ export default function WaitlistForm({
           placeholder="Phone number"
           inputMode="tel"
           disabled={status === "loading"}
-          className="border-b-2 border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#3c2eff]/80"
+          className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff] mix-blend-difference sm:mix-blend-normal"
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-            color: "#3c2eff",
           }}
         />
       </div>
@@ -149,11 +147,10 @@ export default function WaitlistForm({
         onChange={handleChange}
         placeholder="Email"
         disabled={status === "loading"}
-        className="border-b-2 border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#3c2eff]/80"
+        className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff] mix-blend-difference sm:mix-blend-normal"
         style={{
           fontFamily:
             "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-          color: "#3c2eff",
         }}
       />
 
@@ -173,11 +170,10 @@ export default function WaitlistForm({
       {hasPrimaryFieldsFilled && (
         <div className="mt-1 space-y-1">
           <p
-            className="text-sm sm:text-base"
+            className="text-sm sm:text-base mix-blend-difference sm:mix-blend-normal text-white sm:text-[#3c2eff]"
             style={{
               fontFamily:
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              color: "#3c2eff",
             }}
           >
             If you were an NPC – what would be your personality?
@@ -190,11 +186,10 @@ export default function WaitlistForm({
             }
             rows={1}
             disabled={status === "loading"}
-            className="w-full border-b-2 border-[#3c2eff] bg-transparent px-1 py-1.5 text-base leading-tight outline-none resize-none placeholder:text-[#3c2eff]/60"
+            className="w-full border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-1.5 text-base leading-tight outline-none resize-none placeholder:text-white/70 sm:placeholder:text-[#3c2eff]/60 text-white sm:text-[#3c2eff] mix-blend-difference sm:mix-blend-normal"
             style={{
               fontFamily:
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
-              color: "#3c2eff",
             }}
             placeholder="Egotistical mean girl, super smart but sweet nerd..."
           />
@@ -227,7 +222,7 @@ export default function WaitlistForm({
               : {}
           }
           whileTap={status !== "loading" ? { scale: 0.975 } : {}}
-          className="relative w-full py-3.5 px-8 rounded-full font-semibold cursor-pointer overflow-hidden mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          className="relative w-full py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-full font-semibold cursor-pointer overflow-hidden mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
           style={{
             fontFamily: "var(--font-display)",
             background: "#3c2eff",
