@@ -90,6 +90,16 @@ body::after {
   clip-path: inset(0);
 }
 
+/* Text stroke utilities (clean outline, better than shadows) */
+.stroke-blue {
+  -webkit-text-stroke: 6px #3c2eff;
+  paint-order: stroke fill;
+}
+.stroke-yellow {
+  -webkit-text-stroke: 5px rgba(255, 222, 91, 0.95);
+  paint-order: stroke fill;
+}
+
 @layer utilities {
   .text-gradient-brand {
     background: linear-gradient(135deg, #7b2fff 0%, #ff2d9b 55%, #ff6b35 100%);

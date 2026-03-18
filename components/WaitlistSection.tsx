@@ -39,7 +39,7 @@ export default function WaitlistSection() {
             className="max-w-xs text-[13px] leading-snug tracking-[0.12em] text-center"
             style={{
               fontFamily: "var(--font-tagline)",
-              color: "#c3cd3b",
+              color: "#3c2eff",
             }}
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -66,6 +66,7 @@ export default function WaitlistSection() {
                   style={{
                     fontFamily: "var(--font-display)",
                     color: "#3c2eff",
+                    textShadow: "0 4px 0 #ffde5b",
                   }}
                 >
                   Congratulations!
@@ -76,11 +77,12 @@ export default function WaitlistSection() {
             <>
               <div className="w-full flex flex-col items-center sm:items-end text-center sm:text-right gap-1.5 sm:gap-2">
                 <motion.span
-                  className="hidden sm:inline-block text-4xl sm:text-5xl md:text-6xl leading-none pr-1"
+                  className="hidden sm:inline-block text-[2.6rem] sm:text-[3.1rem] md:text-[3.8rem] leading-none pr-1"
                   style={{
                     fontFamily: "var(--font-display)",
                     color: "#ffde5b",
-                    textShadow: "0 6px 0 #3c2eff",
+                    textShadow:
+                      "0 4px 0 #3c2eff, 1px 4px 0 #3c2eff, -1px 4px 0 #3c2eff",
                   }}
                   animate={headingControls}
                 >
@@ -90,7 +92,7 @@ export default function WaitlistSection() {
                   className="hidden sm:block w-full max-w-md text-xs sm:text-sm md:text-base leading-snug tracking-[0.12em]"
                   style={{
                     fontFamily: "var(--font-tagline)",
-                    color: "#fffbc4",
+                    color: "#3c2eff",
                   }}
                 >
                   You&apos;re the main character in all OUR stories!
