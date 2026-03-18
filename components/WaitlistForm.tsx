@@ -170,7 +170,7 @@ export default function WaitlistForm({
       {hasPrimaryFieldsFilled && (
         <div className="mt-1 space-y-1">
           <p
-            className="text-sm sm:text-base mix-blend-difference sm:mix-blend-normal text-white sm:text-[#3c2eff]"
+            className="text-sm sm:text-base text-white sm:text-[#3c2eff] mix-blend-difference sm:mix-blend-normal"
             style={{
               fontFamily:
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
