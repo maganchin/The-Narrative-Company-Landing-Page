@@ -88,15 +88,11 @@ export default function WaitlistForm({
   }
 
   return (
-    <motion.form
+    <form
       onSubmit={handleSubmit}
       noValidate
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
       className="flex flex-col gap-4 w-full max-w-md"
     >
-      {/* Name + Phone (square-ish grid) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-10 gap-y-4">
         <input
           type="text"
@@ -105,7 +101,7 @@ export default function WaitlistForm({
           onChange={handleChange}
           placeholder="Name"
           disabled={status === "loading"}
-          className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff] mix-blend-difference sm:mix-blend-normal"
+          className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff]"
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -119,7 +115,7 @@ export default function WaitlistForm({
           placeholder="Phone number"
           inputMode="tel"
           disabled={status === "loading"}
-          className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff] mix-blend-difference sm:mix-blend-normal"
+          className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff]"
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -129,7 +125,7 @@ export default function WaitlistForm({
 
       {(fieldErrors.firstName || fieldErrors.phone) && (
         <p
-          className="text-[11px] sm:text-xs text-red-500"
+          className="text-[11px] sm:text-xs text-white sm:text-red-500"
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -139,7 +135,6 @@ export default function WaitlistForm({
         </p>
       )}
 
-      {/* Email */}
       <input
         type="email"
         name="email"
@@ -147,7 +142,7 @@ export default function WaitlistForm({
         onChange={handleChange}
         placeholder="Email"
         disabled={status === "loading"}
-        className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff] mix-blend-difference sm:mix-blend-normal"
+        className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff]"
         style={{
           fontFamily:
             "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -156,7 +151,7 @@ export default function WaitlistForm({
 
       {fieldErrors.email && (
         <p
-          className="text-[11px] sm:text-xs text-red-500"
+          className="text-[11px] sm:text-xs text-white sm:text-red-500"
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -166,11 +161,10 @@ export default function WaitlistForm({
         </p>
       )}
 
-      {/* NPC Question */}
       {hasPrimaryFieldsFilled && (
         <div className="mt-1 space-y-1">
           <p
-            className="text-sm sm:text-base text-white sm:text-[#3c2eff] mix-blend-difference sm:mix-blend-normal"
+            className="text-sm sm:text-base text-white sm:text-[#3c2eff]"
             style={{
               fontFamily:
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -186,7 +180,7 @@ export default function WaitlistForm({
             }
             rows={1}
             disabled={status === "loading"}
-            className="w-full border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-1.5 text-base leading-tight outline-none resize-none placeholder:text-white/70 sm:placeholder:text-[#3c2eff]/60 text-white sm:text-[#3c2eff] mix-blend-difference sm:mix-blend-normal"
+            className="w-full border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-1.5 text-base leading-tight outline-none resize-none placeholder:text-white/70 sm:placeholder:text-[#3c2eff]/60 text-white sm:text-[#3c2eff]"
             style={{
               fontFamily:
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -196,19 +190,17 @@ export default function WaitlistForm({
         </div>
       )}
 
-      {/* Error message */}
       {status === "error" && (
         <motion.p
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-red-500 text-xs text-center"
+          className="text-white sm:text-red-500 text-xs text-center"
           style={{ fontFamily: "var(--font-body)" }}
         >
           {errorMsg}
         </motion.p>
       )}
 
-      {/* CTA Button */}
       {hasPrimaryFieldsFilled && (
         <motion.button
           type="submit"
@@ -225,28 +217,17 @@ export default function WaitlistForm({
           className="relative w-full py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-full font-semibold cursor-pointer overflow-hidden mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
           style={{
             fontFamily: "var(--font-display)",
-            background: "#3c2eff",
-            color: "#fffbc4",
+            background: "#fffbc4",
+            color: "#000000",
             fontSize: "0.9rem",
             letterSpacing: "0.08em",
           }}
         >
-          <motion.span
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                "linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.15) 50%, transparent 60%)",
-              backgroundSize: "200% 100%",
-            }}
-            initial={{ backgroundPositionX: "200%" }}
-            whileHover={{ backgroundPositionX: "-50%" }}
-            transition={{ duration: 0.55 }}
-          />
           <span className="relative z-10 uppercase tracking-[0.14em]">
             {status === "loading" ? "Saving..." : ctaLabel}
           </span>
         </motion.button>
       )}
-    </motion.form>
+    </form>
   );
 }
