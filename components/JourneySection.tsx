@@ -3,16 +3,6 @@
 import { useRef } from "react";
 import { motion, useInView, useScroll, useTransform } from "framer-motion";
 
-const pathNodes = [
-  { id: "A", label: "Begin", x: "50%", y: "5%", primary: true },
-  { id: "B", label: "Left Path", x: "25%", y: "35%" },
-  { id: "C", label: "Right Path", x: "75%", y: "35%" },
-  { id: "D", label: "Dark Forest", x: "15%", y: "65%" },
-  { id: "E", label: "Hidden City", x: "40%", y: "68%" },
-  { id: "F", label: "Ancient Tower", x: "62%", y: "65%" },
-  { id: "G", label: "The End", x: "85%", y: "65%", accent: true },
-];
-
 const stats = [
   { value: "∞", label: "Possible storylines" },
   { value: "100+", label: "Decision points" },

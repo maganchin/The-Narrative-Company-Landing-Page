@@ -1,7 +1,30 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import * as THREE from "three";
+import {
+  ACESFilmicToneMapping,
+  AmbientLight,
+  Clock,
+  Color,
+  FrontSide,
+  Group,
+  Mesh,
+  MeshBasicMaterial,
+  MeshPhysicalMaterial,
+  PerspectiveCamera,
+  Plane,
+  PMREMGenerator,
+  PointLight,
+  Raycaster,
+  Scene,
+  SphereGeometry,
+  SRGBColorSpace,
+  Texture,
+  TextureLoader,
+  Vector2,
+  Vector3,
+  WebGLRenderer,
+} from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment";
@@ -16,45 +39,46 @@ export default function ThreeBackground() {
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#fffbc4");
+    const scene = new Scene();
+    scene.background = new Color("#fffbc4");
 
-    const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 10);
+    const camera = new PerspectiveCamera(50, width / height, 0.1, 10);
     camera.position.set(0, 0, 2.5);
     camera.lookAt(0, 0, 0);
 
-    const renderer = new THREE.WebGLRenderer({ antialias: true });
+    const renderer = new WebGLRenderer({ antialias: true });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.outputColorSpace = SRGBColorSpace;
+    renderer.toneMapping = ACESFilmicToneMapping;
     renderer.toneMappingExposure = 0.55;
     container.appendChild(renderer.domElement);
 
-    const pmrem = new THREE.PMREMGenerator(renderer);
+    const pmrem = new PMREMGenerator(renderer);
     const envRT = pmrem.fromScene(new RoomEnvironment(), 0.001);
     scene.environment = envRT.texture;
 
-    const textureLoader = new THREE.TextureLoader();
-    const logoTexture = textureLoader.load("/logo-square.png", (tex) => {
-      tex.colorSpace = THREE.SRGBColorSpace;
-      tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
-      tex.needsUpdate = true;
-    });
+    const textureLoader = new TextureLoader();
+    const logoTexture = textureLoader.load("/logo-square.png", (tex: Texture) => {
+        tex.colorSpace = SRGBColorSpace;
+        tex.anisotropy = renderer.capabilities.getMaxAnisotropy();
+        tex.needsUpdate = true;
+      }
+    );
 
     const innerSize = 0.98;
     const innerGeo = new RoundedBoxGeometry(innerSize, innerSize, innerSize, 7, 0.1);
-    const innerMat = new THREE.MeshBasicMaterial({
+    const innerMat = new MeshBasicMaterial({
       map: logoTexture,
     });
-    const innerCube = new THREE.Mesh(
+    const innerCube = new Mesh(
       innerGeo,
-      new Array(6).fill(innerMat) as THREE.MeshBasicMaterial[]
+      new Array(6).fill(innerMat) as MeshBasicMaterial[]
     );
 
     const outerSize = 1.04;
     const outerGeo = new RoundedBoxGeometry(outerSize, outerSize, outerSize, 7, 0.12);
-    const glassMat = new THREE.MeshPhysicalMaterial({
+    const glassMat = new MeshPhysicalMaterial({
       transmission: 0.99,
       thickness: 0.12,
       ior: 1.45,
@@ -65,40 +89,40 @@ export default function ThreeBackground() {
       envMapIntensity: 1.00,
       transparent: true,
       opacity: 1.0,
-      side: THREE.FrontSide,
+      side: FrontSide,
       depthWrite: false,
     });
-    const outerCube = new THREE.Mesh(outerGeo, glassMat);
+    const outerCube = new Mesh(outerGeo, glassMat);
 
     // Group both cubes so they rotate together
-    const cubeGroup = new THREE.Group();
+    const cubeGroup = new Group();
     cubeGroup.add(innerCube);
     cubeGroup.add(outerCube);
     cubeGroup.rotation.set(-Math.PI * 0.12, Math.PI * 0.35, 0);
     scene.add(cubeGroup);
 
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.08);
+    const ambientLight = new AmbientLight(0xffffff, 0.08);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.PointLight(0xffffff, 0.9, 8);
+    const keyLight = new PointLight(0xffffff, 0.9, 8);
     // Moved off the front face so its reflection doesn't read as a circle on the front.
     keyLight.position.set(2.8, 1.4, -1.2);
     scene.add(keyLight);
 
     // Intense off-axis kickers to increase glass sparkle without reflecting as a front-face blob.
-    const kickerLightA = new THREE.PointLight(0xffffff, 1.25, 9);
+    const kickerLightA = new PointLight(0xffffff, 1.25, 9);
     kickerLightA.position.set(-2.9, 1.1, -1.35);
     scene.add(kickerLightA);
 
-    const kickerLightB = new THREE.PointLight(0xffffff, 0.95, 9);
+    const kickerLightB = new PointLight(0xffffff, 0.95, 9);
     kickerLightB.position.set(2.2, -2.2, -1.5);
     scene.add(kickerLightB);
 
     // ── CHOICE SPHERES (BRANCHING NARRATIVE) ──
     // Small pool, but large enough for natural motion as spheres exit the scene.
     const maxSpheres = 32;
-    const sphereGeometry = new THREE.SphereGeometry(0.03, 32, 32);
-    const sphereMaterial = new THREE.MeshPhysicalMaterial({
+    const sphereGeometry = new SphereGeometry(0.03, 32, 32);
+    const sphereMaterial = new MeshPhysicalMaterial({
       transmission: 1.0,
       thickness: 0.08,
       ior: 1.45,
@@ -109,30 +133,30 @@ export default function ThreeBackground() {
       envMapIntensity: 1.9,
       transparent: true,
       opacity: 0.9,
-      color: new THREE.Color(0xffffff),
-      emissive: new THREE.Color(0xffffff),
+      color: new Color(0xffffff),
+      emissive: new Color(0xffffff),
       emissiveIntensity: 0.04,
     });
 
-    const sphereMeshes: THREE.Mesh[] = [];
-    const sphereVelocities: THREE.Vector3[] = [];
+    const sphereMeshes: Mesh[] = [];
+    const sphereVelocities: Vector3[] = [];
     const sphereAges: number[] = [];
     const sphereLifetimes: number[] = [];
     let nextSphereIndex = 0;
 
     for (let i = 0; i < maxSpheres; i++) {
-      const mesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      const mesh = new Mesh(sphereGeometry, sphereMaterial);
       mesh.visible = false;
       sphereMeshes.push(mesh);
-      sphereVelocities.push(new THREE.Vector3());
+      sphereVelocities.push(new Vector3());
       sphereAges.push(0);
       sphereLifetimes.push(0);
       scene.add(mesh);
     }
 
     const spawnSphere = (
-      position: THREE.Vector3,
-      velocity: THREE.Vector3,
+      position: Vector3,
+      velocity: Vector3,
       lifetime: number
     ) => {
       const index = nextSphereIndex;
@@ -147,10 +171,10 @@ export default function ThreeBackground() {
       sphereLifetimes[index] = lifetime;
     };
 
-    const spawnRootSphere = (point: THREE.Vector3) => {
+    const spawnRootSphere = (point: Vector3) => {
       // Single sphere that marks the cursor position along the path.
       const rootLifetime = 0.95 + Math.random() * 0.35;
-      const rootVelocity = new THREE.Vector3(
+      const rootVelocity = new Vector3(
         (Math.random() - 0.5) * 0.016,
         (Math.random() - 0.5) * 0.016,
         (Math.random() - 0.5) * 0.008
@@ -159,16 +183,16 @@ export default function ThreeBackground() {
     };
 
     const spawnForkFrom = (
-      point: THREE.Vector3,
-      travelDir: THREE.Vector3 | null
+      point: Vector3,
+      travelDir: Vector3 | null
     ) => {
       // Two children: fork from the previous end and fly out of the scene quickly.
       const dir =
         travelDir && travelDir.lengthSq() > 1e-6
           ? travelDir.clone().normalize()
-          : new THREE.Vector3(1, 0, 0);
+          : new Vector3(1, 0, 0);
 
-      const lateral = new THREE.Vector3(-dir.y, dir.x, 0).normalize();
+      const lateral = new Vector3(-dir.y, dir.x, 0).normalize();
       const branchSpeed = 2.2 + Math.random() * 0.6;
       const childLifetime = 2.8 + Math.random() * 0.9;
 
@@ -179,25 +203,25 @@ export default function ThreeBackground() {
       spawnSphere(point, childVelB, childLifetime);
     };
 
-    const raycaster = new THREE.Raycaster();
-    const pointer = new THREE.Vector2();
-    const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
-    const intersectionPoint = new THREE.Vector3();
+    const raycaster = new Raycaster();
+    const pointer = new Vector2();
+    const plane = new Plane(new Vector3(0, 0, 1), 0);
+    const intersectionPoint = new Vector3();
 
     // Reduce lag: pointermove only updates a target; emission happens in RAF loop.
-    const targetPoint = new THREE.Vector3();
+    const targetPoint = new Vector3();
     let hasTarget = false;
 
-    const lastEmit = new THREE.Vector3();
+    const lastEmit = new Vector3();
     let hasLastEmit = false;
-    const lastTravelDir = new THREE.Vector3();
+    const lastTravelDir = new Vector3();
 
     // Conceptual trail of recent cursor positions (for up to N bubbles in a line).
     const maxTrailPoints = 6;
-    const trailPoints: THREE.Vector3[] = [];
+    const trailPoints: Vector3[] = [];
     const trailForkState: number[] = []; // 0 = not split yet, 2 = already split
 
-    const tmpPoint = new THREE.Vector3();
+    const tmpPoint = new Vector3();
 
     const handlePointerMove = (event: PointerEvent) => {
       const rect = container.getBoundingClientRect();
@@ -229,7 +253,7 @@ export default function ThreeBackground() {
     controls.minDistance = 1.8;
     controls.maxDistance = 3.0;
 
-    const clock = new THREE.Clock();
+    const clock = new Clock();
     let forkCooldown = 0;
 
     const handleResize = () => {
@@ -353,8 +377,7 @@ export default function ThreeBackground() {
       renderer.dispose();
       pmrem.dispose();
       envRT.texture.dispose();
-      innerGeo.dispose();
-      outerGeo.dispose();
+      // RoundedBoxGeometry inherits from BufferGeometry, which will be GC'd with the meshes.
       logoTexture.dispose();
       innerMat.dispose();
       glassMat.dispose();
