@@ -10,8 +10,8 @@ function doPost(e) {
 
     // Add header row if sheet is empty
     if (sheet.getLastRow() === 0) {
-      sheet.appendRow(["Timestamp", "First Name", "Email", "Phone"]);
-      sheet.getRange(1, 1, 1, 4).setFontWeight("bold");
+      sheet.appendRow(["Timestamp", "First Name", "Email", "Phone", "NPC Personality"]);
+      sheet.getRange(1, 1, 1, 5).setFontWeight("bold");
     }
 
     sheet.appendRow([
@@ -19,6 +19,7 @@ function doPost(e) {
       data.firstName || "",
       data.email || "",
       data.phone || "",
+      data.npcPersonality || "",
     ]);
 
     return ContentService.createTextOutput(
@@ -39,6 +40,7 @@ function testPost() {
         firstName: "Test",
         email: "test@example.com",
         phone: "555-1234",
+        npcPersonality: "Wise merchant who only speaks in riddles",
       }),
     },
   };

@@ -137,6 +137,7 @@ export default function WaitlistForm({
         </p>
       )}
 
+
       <input
         type="email"
         name="email"
