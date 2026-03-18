@@ -81,77 +81,123 @@ export default function ThreeBackground() {
     scene.add(ambientLight);
 
     const keyLight = new THREE.PointLight(0xffffff, 0.9, 8);
-    keyLight.position.set(1.5, 1.2, 2.5);
+    // Moved off the front face so its reflection doesn't read as a circle on the front.
+    keyLight.position.set(2.8, 1.4, -1.2);
     scene.add(keyLight);
 
-    // ── PARTICLES ──
-    const maxParticles = 2000;
-    const positions = new Float32Array(maxParticles * 3);
-    const velocities = new Float32Array(maxParticles * 3);
-    const ages = new Float32Array(maxParticles);
-    const lifetimes = new Float32Array(maxParticles);
-    const sizes = new Float32Array(maxParticles);
-    const baseSizes = new Float32Array(maxParticles);
+    // Intense off-axis kickers to increase glass sparkle without reflecting as a front-face blob.
+    const kickerLightA = new THREE.PointLight(0xffffff, 1.25, 9);
+    kickerLightA.position.set(-2.9, 1.1, -1.35);
+    scene.add(kickerLightA);
 
-    const particlesGeometry = new THREE.BufferGeometry();
-    particlesGeometry.setAttribute(
-      "position",
-      new THREE.BufferAttribute(positions, 3)
-    );
-    particlesGeometry.setAttribute(
-      "size",
-      new THREE.BufferAttribute(sizes, 1)
-    );
+    const kickerLightB = new THREE.PointLight(0xffffff, 0.95, 9);
+    kickerLightB.position.set(2.2, -2.2, -1.5);
+    scene.add(kickerLightB);
 
-    const particleTexture = textureLoader.load("/particle-soft.png");
-
-    const particlesMaterial = new THREE.PointsMaterial({
-      size: 10,
-      map: particleTexture,
+    // ── CHOICE SPHERES (BRANCHING NARRATIVE) ──
+    // Small pool, but large enough for natural motion as spheres exit the scene.
+    const maxSpheres = 32;
+    const sphereGeometry = new THREE.SphereGeometry(0.03, 32, 32);
+    const sphereMaterial = new THREE.MeshPhysicalMaterial({
+      transmission: 1.0,
+      thickness: 0.08,
+      ior: 1.45,
+      roughness: 0.02,
+      metalness: 0.0,
+      clearcoat: 1.0,
+      clearcoatRoughness: 0.08,
+      envMapIntensity: 1.9,
       transparent: true,
-      depthWrite: false,
-      blending: THREE.AdditiveBlending,
-      color: 0x93bbff,
+      opacity: 0.9,
+      color: new THREE.Color(0xffffff),
+      emissive: new THREE.Color(0xffffff),
+      emissiveIntensity: 0.04,
     });
 
-    const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-    scene.add(particles);
+    const sphereMeshes: THREE.Mesh[] = [];
+    const sphereVelocities: THREE.Vector3[] = [];
+    const sphereAges: number[] = [];
+    const sphereLifetimes: number[] = [];
+    let nextSphereIndex = 0;
 
-    let particleIndex = 0;
+    for (let i = 0; i < maxSpheres; i++) {
+      const mesh = new THREE.Mesh(sphereGeometry, sphereMaterial);
+      mesh.visible = false;
+      sphereMeshes.push(mesh);
+      sphereVelocities.push(new THREE.Vector3());
+      sphereAges.push(0);
+      sphereLifetimes.push(0);
+      scene.add(mesh);
+    }
 
-    const emitParticles = (worldPosition: THREE.Vector3) => {
-      const toSpawn = 30;
-      for (let i = 0; i < toSpawn; i++) {
-        const index = (particleIndex + i) % maxParticles;
-        const pxIndex = index * 3;
-        const angle = Math.random() * Math.PI * 2;
-        const radius = Math.random() * 0.12;
+    const spawnSphere = (
+      position: THREE.Vector3,
+      velocity: THREE.Vector3,
+      lifetime: number
+    ) => {
+      const index = nextSphereIndex;
+      nextSphereIndex = (nextSphereIndex + 1) % maxSpheres;
 
-        positions[pxIndex] = worldPosition.x + Math.cos(angle) * radius;
-        positions[pxIndex + 1] = worldPosition.y + Math.sin(angle) * radius;
-        positions[pxIndex + 2] = worldPosition.z;
+      const mesh = sphereMeshes[index];
+      mesh.position.copy(position);
+      mesh.visible = true;
 
-        const speed = 0.8 + Math.random() * 0.7;
-        velocities[pxIndex] = (Math.random() - 0.5) * speed;
-        velocities[pxIndex + 1] = (Math.random() - 0.5) * speed;
-        velocities[pxIndex + 2] = (Math.random() - 0.5) * speed * 0.4;
+      sphereVelocities[index].copy(velocity);
+      sphereAges[index] = 0;
+      sphereLifetimes[index] = lifetime;
+    };
 
-        ages[index] = 0;
-        lifetimes[index] = 0.5 + Math.random() * 0.5;
-        const size = 0.06 + Math.random() * 0.06;
-        baseSizes[index] = size;
-        sizes[index] = size;
-      }
+    const spawnRootSphere = (point: THREE.Vector3) => {
+      // Single sphere that marks the cursor position along the path.
+      const rootLifetime = 0.95 + Math.random() * 0.35;
+      const rootVelocity = new THREE.Vector3(
+        (Math.random() - 0.5) * 0.016,
+        (Math.random() - 0.5) * 0.016,
+        (Math.random() - 0.5) * 0.008
+      );
+      spawnSphere(point, rootVelocity, rootLifetime);
+    };
 
-      particleIndex = (particleIndex + toSpawn) % maxParticles;
-      (particlesGeometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
-      (particlesGeometry.attributes.size as THREE.BufferAttribute).needsUpdate = true;
+    const spawnForkFrom = (
+      point: THREE.Vector3,
+      travelDir: THREE.Vector3 | null
+    ) => {
+      // Two children: fork from the previous end and fly out of the scene quickly.
+      const dir =
+        travelDir && travelDir.lengthSq() > 1e-6
+          ? travelDir.clone().normalize()
+          : new THREE.Vector3(1, 0, 0);
+
+      const lateral = new THREE.Vector3(-dir.y, dir.x, 0).normalize();
+      const branchSpeed = 2.2 + Math.random() * 0.6;
+      const childLifetime = 2.8 + Math.random() * 0.9;
+
+      const childVelA = lateral.clone().multiplyScalar(branchSpeed);
+      const childVelB = lateral.clone().multiplyScalar(-branchSpeed);
+
+      spawnSphere(point, childVelA, childLifetime);
+      spawnSphere(point, childVelB, childLifetime);
     };
 
     const raycaster = new THREE.Raycaster();
     const pointer = new THREE.Vector2();
     const plane = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
     const intersectionPoint = new THREE.Vector3();
+
+    // Reduce lag: pointermove only updates a target; emission happens in RAF loop.
+    const targetPoint = new THREE.Vector3();
+    let hasTarget = false;
+
+    const lastEmit = new THREE.Vector3();
+    let hasLastEmit = false;
+    const lastTravelDir = new THREE.Vector3();
+
+    // Conceptual trail of recent cursor positions (for up to N bubbles in a line).
+    const maxTrailPoints = 6;
+    const trailPoints: THREE.Vector3[] = [];
+    const trailForkState: number[] = []; // 0 = not split yet, 2 = already split
+
+    const tmpPoint = new THREE.Vector3();
 
     const handlePointerMove = (event: PointerEvent) => {
       const rect = container.getBoundingClientRect();
@@ -160,8 +206,15 @@ export default function ThreeBackground() {
         -((event.clientY - rect.top) / rect.height) * 2 + 1
       );
       raycaster.setFromCamera(pointer, camera);
-      const hit = raycaster.ray.intersectPlane(plane, intersectionPoint);
-      if (hit) emitParticles(intersectionPoint.clone());
+      // If cursor is over the cube, "spill" particles onto its surface.
+      const cubeHits = raycaster.intersectObject(cubeGroup, true);
+      const basePoint =
+        cubeHits[0]?.point ??
+        raycaster.ray.intersectPlane(plane, intersectionPoint) ??
+        null;
+      if (!basePoint) return;
+      targetPoint.copy(basePoint);
+      hasTarget = true;
     };
 
     window.addEventListener("pointermove", handlePointerMove);
@@ -177,6 +230,7 @@ export default function ThreeBackground() {
     controls.maxDistance = 3.0;
 
     const clock = new THREE.Clock();
+    let forkCooldown = 0;
 
     const handleResize = () => {
       if (!container) return;
@@ -193,35 +247,97 @@ export default function ThreeBackground() {
     let animationFrameId: number;
     const animate = () => {
       const delta = clock.getDelta();
+      forkCooldown += delta;
 
-      for (let i = 0; i < maxParticles; i++) {
-        const life = lifetimes[i];
+      // Emit a dotted line of single spheres along the cursor path.
+      // Up to maxTrailPoints bubbles form a history line along the cursor motion.
+      if (hasTarget) {
+        if (!hasLastEmit) {
+          lastEmit.copy(targetPoint);
+          hasLastEmit = true;
+          lastTravelDir.set(1, 0, 0);
+          spawnRootSphere(lastEmit);
+
+          trailPoints.push(lastEmit.clone());
+          trailForkState.push(0);
+        } else {
+          const dx = targetPoint.x - lastEmit.x;
+          const dy = targetPoint.y - lastEmit.y;
+          const dz = targetPoint.z - lastEmit.z;
+          const dist = Math.sqrt(dx * dx + dy * dy + dz * dz);
+
+          // Only emit when we've moved enough, to create separated dots
+          // but still feel very responsive to cursor motion.
+          const minStep = 0.055;
+          if (dist > minStep) {
+            tmpPoint.copy(targetPoint);
+            lastTravelDir.set(dx, dy, dz);
+
+            // New end of the trail is a single sphere at the latest cursor position.
+            spawnRootSphere(tmpPoint);
+            lastEmit.copy(targetPoint);
+
+            // Record this new trail point.
+            trailPoints.push(tmpPoint.clone());
+            trailForkState.push(0);
+
+            // Keep only a short history.
+            if (trailPoints.length > maxTrailPoints) {
+              trailPoints.shift();
+              trailForkState.shift();
+            }
+          }
+        }
+      }
+
+      // Handle splitting along the history: always split the oldest unsplit bubble
+      // at a calm cadence (one fork pair per bubble, not a constant burst).
+      if (trailPoints.length > 0 && forkCooldown >= 0.35) {
+        forkCooldown = 0;
+        // Find the oldest trail point that hasn't split yet.
+        let splitIndex = -1;
+        for (let i = 0; i < trailPoints.length; i++) {
+          if (trailForkState[i] === 0) {
+            splitIndex = i;
+            break;
+          }
+        }
+        if (splitIndex !== -1) {
+          const point = trailPoints[splitIndex];
+          spawnForkFrom(point, lastTravelDir);
+          trailForkState[splitIndex] = 2;
+        }
+      }
+
+      // Update sphere motion and fade them out; forked children travel far
+      // but the overall motion feels smooth and slightly slower.
+      for (let i = 0; i < maxSpheres; i++) {
+        const life = sphereLifetimes[i];
         if (life <= 0) continue;
 
-        const age = ages[i] + delta;
-        ages[i] = age;
+        const age = sphereAges[i] + delta;
+        sphereAges[i] = age;
 
         const t = age / life;
         if (t >= 1) {
-          lifetimes[i] = 0;
-          sizes[i] = 0;
+          sphereLifetimes[i] = 0;
+          sphereMeshes[i].visible = false;
           continue;
         }
 
-        const px = i * 3;
-        positions[px] += velocities[px] * delta;
-        positions[px + 1] += velocities[px + 1] * delta;
-        positions[px + 2] += velocities[px + 2] * delta;
+        const velocity = sphereVelocities[i];
+        const mesh = sphereMeshes[i];
+        mesh.position.addScaledVector(velocity, delta);
 
-        velocities[px] *= 0.88;
-        velocities[px + 1] *= 0.88;
-        velocities[px + 2] *= 0.88;
+        // Very light damping so forked bubbles keep sweeping across the scene.
+        velocity.multiplyScalar(0.985);
 
-        sizes[i] = baseSizes[i] * (1 - t);
+        // Hard kill only when they are far beyond the visible area.
+        if (mesh.position.length() > 8) {
+          sphereLifetimes[i] = 0;
+          mesh.visible = false;
+        }
       }
-
-      (particlesGeometry.attributes.position as THREE.BufferAttribute).needsUpdate = true;
-      (particlesGeometry.attributes.size as THREE.BufferAttribute).needsUpdate = true;
 
       controls.update();
       renderer.render(scene, camera);
@@ -242,8 +358,8 @@ export default function ThreeBackground() {
       logoTexture.dispose();
       innerMat.dispose();
       glassMat.dispose();
-      particlesGeometry.dispose();
-      particlesMaterial.dispose();
+      sphereGeometry.dispose();
+      sphereMaterial.dispose();
     };
   }, []);
 
