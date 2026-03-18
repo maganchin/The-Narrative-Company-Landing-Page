@@ -17,7 +17,7 @@ export default function ThreeBackground() {
     const height = container.clientHeight;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#4d17ff");
+    scene.background = new THREE.Color("#fffbc4");
 
     const camera = new THREE.PerspectiveCamera(50, width / height, 0.1, 10);
     camera.position.set(0, 0, 2.5);
@@ -28,7 +28,7 @@ export default function ThreeBackground() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 0.75;
+    renderer.toneMappingExposure = 0.55;
     container.appendChild(renderer.domElement);
 
     const pmrem = new THREE.PMREMGenerator(renderer);
@@ -44,28 +44,25 @@ export default function ThreeBackground() {
 
     const innerSize = 0.98;
     const innerGeo = new RoundedBoxGeometry(innerSize, innerSize, innerSize, 7, 0.1);
-    const innerMat = new THREE.MeshStandardMaterial({
+    const innerMat = new THREE.MeshBasicMaterial({
       map: logoTexture,
-      roughness: 0.35,
-      metalness: 0.0,
-      envMapIntensity: 0.0,
     });
     const innerCube = new THREE.Mesh(
       innerGeo,
-      new Array(6).fill(innerMat) as THREE.MeshStandardMaterial[]
+      new Array(6).fill(innerMat) as THREE.MeshBasicMaterial[]
     );
 
     const outerSize = 1.04;
     const outerGeo = new RoundedBoxGeometry(outerSize, outerSize, outerSize, 7, 0.12);
     const glassMat = new THREE.MeshPhysicalMaterial({
-      transmission: 0.98,
+      transmission: 0.99,
       thickness: 0.12,
       ior: 1.45,
       roughness: 0.02,
       metalness: 0.0,
       clearcoat: 1.0,
       clearcoatRoughness: 0.04,
-      envMapIntensity: 0.02,
+      envMapIntensity: 1.00,
       transparent: true,
       opacity: 1.0,
       side: THREE.FrontSide,
@@ -80,11 +77,11 @@ export default function ThreeBackground() {
     cubeGroup.rotation.set(-Math.PI * 0.12, Math.PI * 0.35, 0);
     scene.add(cubeGroup);
 
-    const ambientLight = new THREE.AmbientLight(0xffdd5a, 0.08);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.08);
     scene.add(ambientLight);
 
-    const keyLight = new THREE.PointLight(0xffdd5a, 1.4, 8);
-    keyLight.position.set(1.8, 1.0, 2.8);
+    const keyLight = new THREE.PointLight(0xffffff, 0.9, 8);
+    keyLight.position.set(1.5, 1.2, 2.5);
     scene.add(keyLight);
 
     // ── PARTICLES ──
