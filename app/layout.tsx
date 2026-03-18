@@ -1,5 +1,24 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { Gaegu, Noto_Sans_Display, Space_Grotesk } from "next/font/google";
+
+const fontDisplay = Gaegu({
+  weight: ["400", "700"],
+  subsets: ["latin"],
+  variable: "--font-display",
+});
+
+const fontTagline = Noto_Sans_Display({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-tagline",
+});
+
+const fontBody = Space_Grotesk({
+  weight: ["400", "500", "600", "700"],
+  subsets: ["latin"],
+  variable: "--font-body",
+});
 
 export const metadata: Metadata = {
   title: "The Narrative Company",
@@ -18,15 +37,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Space+Grotesk:wght@400;500&display=swap"
-          rel="stylesheet"
-        />
-      </head>
+    <html
+      lang="en"
+      className={`${fontDisplay.variable} ${fontTagline.variable} ${fontBody.variable}`}
+    >
       <body>{children}</body>
     </html>
   );

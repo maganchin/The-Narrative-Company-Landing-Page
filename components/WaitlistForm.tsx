@@ -101,10 +101,11 @@ export default function WaitlistForm({
           onChange={handleChange}
           placeholder="Name"
           disabled={status === "loading"}
-          className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff]"
+          className="border-b-2 border-[#c3cd3b] sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#c3cd3b]/70 sm:placeholder:text-[#3c2eff]/80"
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            color: "#c3cd3b",
           }}
         />
         <input
@@ -115,17 +116,18 @@ export default function WaitlistForm({
           placeholder="Phone number"
           inputMode="tel"
           disabled={status === "loading"}
-          className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff]"
+          className="border-b-2 border-[#c3cd3b] sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#c3cd3b]/70 sm:placeholder:text-[#3c2eff]/80"
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+            color: "#c3cd3b",
           }}
         />
       </div>
 
       {(fieldErrors.firstName || fieldErrors.phone) && (
         <p
-          className="text-[11px] sm:text-xs text-white sm:text-red-500"
+          className="text-[11px] sm:text-xs text-[#c3cd3b] sm:text-red-500"
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -142,16 +144,17 @@ export default function WaitlistForm({
         onChange={handleChange}
         placeholder="Email"
         disabled={status === "loading"}
-        className="border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-white/80 sm:placeholder:text-[#3c2eff]/80 text-white sm:text-[#3c2eff]"
+        className="border-b-2 border-[#c3cd3b] sm:border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#c3cd3b]/70 sm:placeholder:text-[#3c2eff]/80"
         style={{
           fontFamily:
             "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+          color: "#c3cd3b",
         }}
       />
 
       {fieldErrors.email && (
         <p
-          className="text-[11px] sm:text-xs text-white sm:text-red-500"
+          className="text-[11px] sm:text-xs text-[#c3cd3b] sm:text-red-500"
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -164,10 +167,11 @@ export default function WaitlistForm({
       {hasPrimaryFieldsFilled && (
         <div className="mt-1 space-y-1">
           <p
-            className="text-sm sm:text-base text-white sm:text-[#3c2eff]"
+            className="text-sm sm:text-base"
             style={{
               fontFamily:
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              color: "#c3cd3b",
             }}
           >
             If you were an NPC – what would be your personality?
@@ -180,12 +184,13 @@ export default function WaitlistForm({
             }
             rows={1}
             disabled={status === "loading"}
-            className="w-full border-b-2 border-white sm:border-[#3c2eff] bg-transparent px-1 py-1.5 text-base leading-tight outline-none resize-none placeholder:text-white/70 sm:placeholder:text-[#3c2eff]/60 text-white sm:text-[#3c2eff]"
+            className="w-full border-b-2 border-[#c3cd3b] sm:border-[#3c2eff] bg-transparent px-1 py-1.5 text-base leading-tight outline-none resize-none placeholder:text-[#c3cd3b]/45 sm:placeholder:text-[#3c2eff]/60"
             style={{
               fontFamily:
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              color: "#c3cd3b",
             }}
-            placeholder="Egotistical mean girl, super smart but sweet nerd..."
+            placeholder="egotistical mean girl who isn't actaully funny"
           />
         </div>
       )}
@@ -194,7 +199,7 @@ export default function WaitlistForm({
         <motion.p
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-white sm:text-red-500 text-xs text-center"
+          className="text-[#c3cd3b] sm:text-red-500 text-xs text-center"
           style={{ fontFamily: "var(--font-body)" }}
         >
           {errorMsg}
@@ -218,7 +223,7 @@ export default function WaitlistForm({
           style={{
             fontFamily: "var(--font-display)",
             background: "#fffbc4",
-            color: "#000000",
+            color: "#c3cd3b",
             fontSize: "0.9rem",
             letterSpacing: "0.08em",
           }}

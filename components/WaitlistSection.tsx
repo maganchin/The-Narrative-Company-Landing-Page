@@ -34,12 +34,12 @@ export default function WaitlistSection() {
     <>
       {/* Mobile-only tagline — plain div with blend, animation nested inside */}
       {!submitted && (
-        <div className="pointer-events-none fixed inset-x-0 top-4 z-20 flex justify-center px-4 sm:hidden mix-blend-difference">
+        <div className="pointer-events-none fixed inset-x-0 top-5 z-20 flex justify-center px-4 sm:hidden mix-blend-difference">
           <motion.p
-            className="max-w-xs text-xs leading-snug tracking-[0.12em] text-center text-white"
+            className="max-w-xs text-[13px] leading-snug tracking-[0.12em] text-center"
             style={{
-              fontFamily:
-                "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              fontFamily: "var(--font-tagline)",
+              color: "#c3cd3b",
             }}
             initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
@@ -78,8 +78,7 @@ export default function WaitlistSection() {
                 <motion.span
                   className="hidden sm:inline-block text-4xl sm:text-5xl md:text-6xl leading-none pr-1"
                   style={{
-                    fontFamily:
-                      "'Pacifico', 'Comic Sans MS', 'Bradley Hand', cursive",
+                    fontFamily: "var(--font-display)",
                     color: "#ffde5b",
                     textShadow: "0 6px 0 #3c2eff",
                   }}
@@ -90,8 +89,7 @@ export default function WaitlistSection() {
                 <p
                   className="hidden sm:block w-full max-w-md text-xs sm:text-sm md:text-base leading-snug tracking-[0.12em]"
                   style={{
-                    fontFamily:
-                      "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                    fontFamily: "var(--font-tagline)",
                     color: "#fffbc4",
                   }}
                 >
