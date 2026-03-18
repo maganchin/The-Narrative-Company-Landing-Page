@@ -22,6 +22,8 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request body." }, { status: 400 });
   }
 
+  console.log("[waitlist] received:", JSON.stringify(body));
+
   if (!body.firstName || !body.email) {
     return NextResponse.json(
       { error: "First name and email are required." },
@@ -40,6 +42,9 @@ export async function POST(request: NextRequest) {
         npcPersonality: body.npcPersonality?.trim() ?? "",
       }),
     });
+
+    const responseText = await res.text();
+    console.log("[waitlist] script response:", res.status, responseText);
 
     if (!res.ok) {
       throw new Error(`Apps Script responded with status ${res.status}`);

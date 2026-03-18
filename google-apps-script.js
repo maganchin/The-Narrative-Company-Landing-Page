@@ -7,6 +7,7 @@ function doPost(e) {
   try {
     const sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     const data = JSON.parse(e.postData.contents);
+    Logger.log("Received data: " + JSON.stringify(data));
 
     // Add header row if sheet is empty
     if (sheet.getLastRow() === 0) {
