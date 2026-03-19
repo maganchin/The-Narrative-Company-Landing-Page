@@ -4,12 +4,18 @@ import { motion, useAnimation } from "framer-motion";
 import { useEffect, useState } from "react";
 import WaitlistForm from "./WaitlistForm";
 
-export default function WaitlistSection() {
-  const [submitted, setSubmitted] = useState(false);
+type WaitlistState = "initial" | "congrats" | "guessOffer";
+
+interface Props {
+  onStartGuessing: () => void;
+}
+
+export default function WaitlistSection({ onStartGuessing }: Props) {
+  const [state, setState] = useState<WaitlistState>("initial");
   const headingControls = useAnimation();
 
   useEffect(() => {
-    if (submitted) return;
+    if (state !== "initial") return;
 
     const triggerBuzz = () => {
       headingControls.start({
@@ -28,12 +34,17 @@ export default function WaitlistSection() {
       clearTimeout(initialTimeout);
       clearInterval(intervalId);
     };
-  }, [submitted, headingControls]);
+  }, [state, headingControls]);
+
+  // Immediately reveal the guess offer after congrats (no extra delay)
+  useEffect(() => {
+    if (state !== "congrats") return;
+    setState("guessOffer");
+  }, [state]);
 
   return (
     <>
-      {/* Mobile-only tagline — plain div with blend, animation nested inside */}
-      {!submitted && (
+      {state === "initial" && (
         <div className="pointer-events-none fixed inset-x-0 top-5 z-20 flex justify-center px-4 sm:hidden mix-blend-difference">
           <motion.p
             className="max-w-xs text-[13px] leading-snug tracking-[0.12em] text-center"
@@ -50,16 +61,17 @@ export default function WaitlistSection() {
         </div>
       )}
 
-      {/* Main waitlist area — plain div with blend on mobile, motion inside */}
       <div className="pointer-events-none fixed inset-0 z-10 flex items-end justify-end pb-6 px-4 sm:pb-10 sm:px-10 mix-blend-difference sm:mix-blend-normal">
         <motion.div
-          className="pointer-events-auto w-full max-w-xl flex flex-col items-center sm:items-end gap-3 sm:gap-4"
+          className={`pointer-events-auto w-full max-w-xl flex flex-col gap-3 sm:gap-4 ${
+            state === "initial" ? "items-center sm:items-end" : "items-center"
+          }`}
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
         >
-          {submitted ? (
-            <div className="bg-transparent">
+          {state === "congrats" || state === "guessOffer" ? (
+            <div className="flex flex-col items-center gap-5">
               <div className="inline-block rounded-3xl px-6 py-4 sm:px-8 sm:py-5">
                 <p
                   className="text-3xl sm:text-4xl md:text-5xl tracking-tight"
@@ -72,6 +84,50 @@ export default function WaitlistSection() {
                   Congratulations!
                 </p>
               </div>
+
+              {state === "guessOffer" && (
+                <motion.div
+                  className="flex flex-col items-center gap-3 text-center"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <motion.p
+                    className="text-sm sm:text-base tracking-[0.1em]"
+                    style={{
+                      fontFamily: "var(--font-tagline)",
+                      color: "#3c2eff",
+                    }}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4 }}
+                  >
+                    do you want to try guessing the game?
+                  </motion.p>
+
+                  <motion.button
+                    onClick={onStartGuessing}
+                    className="px-7 py-3 rounded-2xl text-sm sm:text-base tracking-[0.06em]"
+                    style={{
+                      fontFamily: "var(--font-tagline)",
+                      backgroundColor: "#3c2eff",
+                      color: "#ffde5b",
+                    }}
+                    initial={{ opacity: 0, scale: 0.3, y: 24 }}
+                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                    transition={{
+                      type: "spring",
+                      stiffness: 420,
+                      damping: 11,
+                      delay: 0,
+                    }}
+                    whileHover={{ scale: 1.06 }}
+                    whileTap={{ scale: 0.94 }}
+                  >
+                    yes i&apos;m impatient
+                  </motion.button>
+                </motion.div>
+              )}
             </div>
           ) : (
             <>
@@ -102,7 +158,7 @@ export default function WaitlistSection() {
               <div className="w-full max-w-md">
                 <WaitlistForm
                   ctaLabel="Join Waitlist"
-                  onSuccess={() => setSubmitted(true)}
+                  onSuccess={() => setState("congrats")}
                 />
               </div>
             </>

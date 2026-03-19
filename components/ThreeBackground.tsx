@@ -29,8 +29,22 @@ import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 import { RoundedBoxGeometry } from "three/examples/jsm/geometries/RoundedBoxGeometry";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment";
 
-export default function ThreeBackground() {
+interface Props {
+  hideCube?: boolean;
+  disableCursorEffects?: boolean;
+}
+
+export default function ThreeBackground({
+  hideCube = false,
+  disableCursorEffects = false,
+}: Props) {
   const containerRef = useRef<HTMLDivElement | null>(null);
+  const cubeGroupRef = useRef<Group | null>(null);
+  const controlsRef = useRef<OrbitControls | null>(null);
+  const cursorEffectsEnabledRef = useRef(!disableCursorEffects);
+  const hasTargetRef = useRef(false);
+  const sphereMeshesRef = useRef<Mesh[] | null>(null);
+  const sphereLifetimesRef = useRef<number[] | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -100,6 +114,7 @@ export default function ThreeBackground() {
     cubeGroup.add(outerCube);
     cubeGroup.rotation.set(-Math.PI * 0.12, Math.PI * 0.35, 0);
     scene.add(cubeGroup);
+    cubeGroupRef.current = cubeGroup;
 
     const ambientLight = new AmbientLight(0xffffff, 0.08);
     scene.add(ambientLight);
@@ -143,6 +158,9 @@ export default function ThreeBackground() {
     const sphereAges: number[] = [];
     const sphereLifetimes: number[] = [];
     let nextSphereIndex = 0;
+
+    sphereMeshesRef.current = sphereMeshes;
+    sphereLifetimesRef.current = sphereLifetimes;
 
     for (let i = 0; i < maxSpheres; i++) {
       const mesh = new Mesh(sphereGeometry, sphereMaterial);
@@ -210,7 +228,6 @@ export default function ThreeBackground() {
 
     // Reduce lag: pointermove only updates a target; emission happens in RAF loop.
     const targetPoint = new Vector3();
-    let hasTarget = false;
 
     const lastEmit = new Vector3();
     let hasLastEmit = false;
@@ -224,6 +241,7 @@ export default function ThreeBackground() {
     const tmpPoint = new Vector3();
 
     const handlePointerMove = (event: PointerEvent) => {
+      if (!cursorEffectsEnabledRef.current) return;
       const rect = container.getBoundingClientRect();
       pointer.set(
         ((event.clientX - rect.left) / rect.width) * 2 - 1,
@@ -238,13 +256,14 @@ export default function ThreeBackground() {
         null;
       if (!basePoint) return;
       targetPoint.copy(basePoint);
-      hasTarget = true;
+      hasTargetRef.current = true;
     };
 
     window.addEventListener("pointermove", handlePointerMove);
 
     // ── ORBIT CONTROLS ──
     const controls = new OrbitControls(camera, renderer.domElement);
+    controlsRef.current = controls;
     controls.enableDamping = true;
     controls.enablePan = false;
     controls.autoRotate = true;
@@ -275,7 +294,7 @@ export default function ThreeBackground() {
 
       // Emit a dotted line of single spheres along the cursor path.
       // Up to maxTrailPoints bubbles form a history line along the cursor motion.
-      if (hasTarget) {
+      if (hasTargetRef.current) {
         if (!hasLastEmit) {
           lastEmit.copy(targetPoint);
           hasLastEmit = true;
@@ -385,6 +404,27 @@ export default function ThreeBackground() {
       sphereMaterial.dispose();
     };
   }, []);
+
+  useEffect(() => {
+    if (cubeGroupRef.current) {
+      cubeGroupRef.current.visible = !hideCube;
+    }
+  }, [hideCube]);
+
+  useEffect(() => {
+    cursorEffectsEnabledRef.current = !disableCursorEffects;
+    hasTargetRef.current = false;
+    if (controlsRef.current) {
+      controlsRef.current.autoRotate = !disableCursorEffects;
+    }
+
+    if (disableCursorEffects && sphereMeshesRef.current && sphereLifetimesRef.current) {
+      for (let i = 0; i < sphereMeshesRef.current.length; i++) {
+        sphereMeshesRef.current[i].visible = false;
+        sphereLifetimesRef.current[i] = 0;
+      }
+    }
+  }, [disableCursorEffects]);
 
   return (
     <div ref={containerRef} className="fixed inset-0 z-0" />
