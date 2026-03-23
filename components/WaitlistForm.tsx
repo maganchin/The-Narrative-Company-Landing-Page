@@ -10,6 +10,10 @@ interface WaitlistFormProps {
 
 type Status = "idle" | "loading" | "success" | "error";
 
+/** Per-field blend: on small screens, text/lines invert against the WebGL canvas so blue reads on yellow and flips lighter over the cube. */
+const FIELD_BLEND_OVER_CANVAS =
+  "max-sm:mix-blend-difference sm:mix-blend-normal";
+
 export default function WaitlistForm({
   ctaLabel = "Join the Waitlist",
   onSuccess,
@@ -101,7 +105,7 @@ export default function WaitlistForm({
           onChange={handleChange}
           placeholder="Name"
           disabled={status === "loading"}
-          className="border-b-2 border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#3c2eff]/60"
+          className={`border-b-2 border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#3c2eff]/60 ${FIELD_BLEND_OVER_CANVAS}`}
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -116,7 +120,7 @@ export default function WaitlistForm({
           placeholder="Phone number"
           inputMode="tel"
           disabled={status === "loading"}
-          className="border-b-2 border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#3c2eff]/60"
+          className={`border-b-2 border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#3c2eff]/60 ${FIELD_BLEND_OVER_CANVAS}`}
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -127,7 +131,7 @@ export default function WaitlistForm({
 
       {(fieldErrors.firstName || fieldErrors.phone) && (
         <p
-          className="text-[11px] sm:text-xs text-[#c3cd3b] sm:text-red-500"
+          className={`text-[11px] sm:text-xs text-[#c3cd3b] sm:text-red-500 ${FIELD_BLEND_OVER_CANVAS}`}
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -145,7 +149,7 @@ export default function WaitlistForm({
         onChange={handleChange}
         placeholder="Email"
         disabled={status === "loading"}
-        className="border-b-2 border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#3c2eff]/60"
+        className={`border-b-2 border-[#3c2eff] bg-transparent px-1 py-2 text-base outline-none placeholder:text-[#3c2eff]/60 ${FIELD_BLEND_OVER_CANVAS}`}
         style={{
           fontFamily:
             "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -155,7 +159,7 @@ export default function WaitlistForm({
 
       {fieldErrors.email && (
         <p
-          className="text-[11px] sm:text-xs text-[#c3cd3b] sm:text-red-500"
+          className={`text-[11px] sm:text-xs text-[#c3cd3b] sm:text-red-500 ${FIELD_BLEND_OVER_CANVAS}`}
           style={{
             fontFamily:
               "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -168,7 +172,7 @@ export default function WaitlistForm({
       {hasPrimaryFieldsFilled && (
         <div className="mt-1 space-y-1">
           <p
-            className="text-sm sm:text-base text-[#3c2eff]"
+            className={`text-sm sm:text-base text-[#3c2eff] ${FIELD_BLEND_OVER_CANVAS}`}
             style={{
               fontFamily:
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -184,7 +188,7 @@ export default function WaitlistForm({
             }
             rows={1}
             disabled={status === "loading"}
-            className="w-full border-b-2 border-[#3c2eff] bg-transparent px-1 py-1.5 text-base leading-tight outline-none resize-none placeholder:text-[#3c2eff]/35"
+            className={`w-full border-b-2 border-[#3c2eff] bg-transparent px-1 py-1.5 text-base leading-tight outline-none resize-none placeholder:text-[#3c2eff]/35 ${FIELD_BLEND_OVER_CANVAS}`}
             style={{
               fontFamily:
                 "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
@@ -199,7 +203,7 @@ export default function WaitlistForm({
         <motion.p
           initial={{ opacity: 0, y: -4 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-[#c3cd3b] sm:text-red-500 text-xs text-center"
+          className={`text-[#c3cd3b] sm:text-red-500 text-xs text-center ${FIELD_BLEND_OVER_CANVAS}`}
           style={{ fontFamily: "var(--font-body)" }}
         >
           {errorMsg}
@@ -219,7 +223,7 @@ export default function WaitlistForm({
               : {}
           }
           whileTap={status !== "loading" ? { scale: 0.975 } : {}}
-          className="relative w-full py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-full font-semibold cursor-pointer overflow-hidden mt-2 disabled:opacity-70 disabled:cursor-not-allowed"
+          className="relative w-full py-2.5 sm:py-3.5 px-6 sm:px-8 rounded-full font-semibold cursor-pointer overflow-hidden mt-2 disabled:opacity-70 disabled:cursor-not-allowed mix-blend-normal"
           style={{
             fontFamily: "var(--font-display)",
             background: "#3c2eff",

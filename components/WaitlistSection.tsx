@@ -45,9 +45,9 @@ export default function WaitlistSection({ onStartGuessing }: Props) {
   return (
     <>
       {state === "initial" && (
-        <div className="pointer-events-none fixed inset-x-0 top-5 z-20 flex justify-center px-4 sm:hidden mix-blend-difference">
+        <div className="pointer-events-none fixed inset-x-0 top-5 z-20 flex justify-center px-4 sm:hidden">
           <motion.p
-            className="max-w-xs text-[13px] leading-snug tracking-[0.12em] text-center"
+            className="max-w-xs text-[13px] leading-snug tracking-[0.12em] text-center max-sm:mix-blend-difference sm:mix-blend-normal"
             style={{
               fontFamily: "var(--font-tagline)",
               color: "#3c2eff",
@@ -61,7 +61,7 @@ export default function WaitlistSection({ onStartGuessing }: Props) {
         </div>
       )}
 
-      <div className="pointer-events-none fixed inset-0 z-10 flex items-end justify-end pb-6 px-4 sm:pb-10 sm:px-10 mix-blend-difference sm:mix-blend-normal">
+      <div className="pointer-events-none fixed inset-0 z-10 flex items-end justify-end pb-6 px-4 sm:pb-10 sm:px-10">
         <motion.div
           className={`pointer-events-auto w-full max-w-xl flex flex-col gap-3 sm:gap-4 ${
             state === "initial" ? "items-center sm:items-end" : "items-center"
@@ -74,11 +74,10 @@ export default function WaitlistSection({ onStartGuessing }: Props) {
             <div className="flex flex-col items-center gap-5">
               <div className="inline-block rounded-3xl px-6 py-4 sm:px-8 sm:py-5">
                 <p
-                  className="text-3xl sm:text-4xl md:text-5xl tracking-tight"
+                  className="text-3xl sm:text-4xl md:text-5xl tracking-tight max-sm:mix-blend-difference sm:mix-blend-normal max-sm:[text-shadow:none] sm:[text-shadow:0_4px_0_#ffde5b]"
                   style={{
                     fontFamily: "var(--font-display)",
                     color: "#3c2eff",
-                    textShadow: "0 4px 0 #ffde5b",
                   }}
                 >
                   Congratulations!
@@ -93,7 +92,7 @@ export default function WaitlistSection({ onStartGuessing }: Props) {
                   transition={{ duration: 0.3 }}
                 >
                   <motion.p
-                    className="text-sm sm:text-base tracking-[0.1em]"
+                    className="text-sm sm:text-base tracking-[0.1em] max-sm:mix-blend-difference sm:mix-blend-normal"
                     style={{
                       fontFamily: "var(--font-tagline)",
                       color: "#3c2eff",
@@ -107,7 +106,7 @@ export default function WaitlistSection({ onStartGuessing }: Props) {
 
                   <motion.button
                     onClick={onStartGuessing}
-                    className="px-7 py-3 rounded-2xl text-sm sm:text-base tracking-[0.06em]"
+                    className="px-7 py-3 rounded-2xl text-sm sm:text-base tracking-[0.06em] mix-blend-normal"
                     style={{
                       fontFamily: "var(--font-tagline)",
                       backgroundColor: "#3c2eff",

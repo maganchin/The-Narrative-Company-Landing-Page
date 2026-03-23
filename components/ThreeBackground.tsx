@@ -116,6 +116,16 @@ export default function ThreeBackground({
     scene.add(cubeGroup);
     cubeGroupRef.current = cubeGroup;
 
+    // On narrow viewports, nudge the cube upward so it sits a bit higher than dead-center.
+    const MOBILE_MAX_WIDTH = 640;
+    const MOBILE_CUBE_Y_OFFSET = 0.28;
+    const applyCubeVerticalLayout = () => {
+      if (!container) return;
+      const mobile = container.clientWidth < MOBILE_MAX_WIDTH;
+      cubeGroup.position.y = mobile ? MOBILE_CUBE_Y_OFFSET : 0;
+    };
+    applyCubeVerticalLayout();
+
     const ambientLight = new AmbientLight(0xffffff, 0.08);
     scene.add(ambientLight);
 
@@ -283,6 +293,7 @@ export default function ThreeBackground({
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      applyCubeVerticalLayout();
     };
 
     window.addEventListener("resize", handleResize);
